@@ -283,9 +283,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# ДАЛЕЕ БУДЕТ ПОДКЛЮЧЕНА БД С ЕЕ ФУНКЦИОНАЛ АНАЛИТИКИ ДАННЫХ
-# в БД стоит записывать конечный результат за сутки работы.
 #dit = get_updates()
     #print(type(dit))
     #with open('newbot.json', 'w') as file:
