@@ -43,10 +43,16 @@ def get_message():
 
             if b == True:
                 recursion_edit = recursion(data=data)
-                recursion_edit_mess_id = recursion_edit['message']['message_id']
-                recursion_edit_user_id = recursion_edit['message']['chat']['id']
-                db.edit_message(user_id=recursion_edit_user_id, message_id=recursion_edit_mess_id)
-                return editor_message(data=data)
+                if 'edited_message' in recursion(data=data):
+                    not_found_message_id = recursion_edit['edited_message']['message_id']
+                    not_found_user_id = recursion_edit['edited_message']['chat']['id']
+                    db.edit_message(user_id=not_found_user_id, message_id=not_found_message_id)
+                    return editor_message(data=data)
+                else:
+                    recursion_edit_mess_id = recursion_edit['message']['message_id']
+                    recursion_edit_user_id = recursion_edit['message']['chat']['id']
+                    db.edit_message(user_id=recursion_edit_user_id, message_id=recursion_edit_mess_id)
+                    return editor_message(data=data)
             else:
                 message_id = data['result'][-1]['message']['message_id']
                 date = data['result'][-1]['message']['date']
@@ -75,13 +81,19 @@ def recursion(data: dict):
     flag = True
     while flag:
         find_id = cheak_data.pop(-1)
-        respond = cheak_data[-1]
-        key = respond['message']
-        vallues = key.items()
-        alpha = ('message_id', message_id) in vallues
-        if alpha == True:
-            flag = False
-            return respond
+        try:
+            respond = cheak_data[-1]
+            if 'message' not in respond:
+                key = respond['edited_message']
+            else:
+                key = respond['message']
+            vallues = key.items()
+            alpha = ('message_id', message_id) in vallues
+            if alpha == True:
+                flag = False
+                return respond
+        except IndexError:
+            return data['result'][-1]
     if cheak_data:
         return recursion(cheak_data)
 print(get_message())
