@@ -9,7 +9,7 @@ import par as db
 now = datetime.datetime.now()
 now_str = now.strftime('%Y.%m.%d') # Для улучшения поиска данных лучше убрать часы а оставить только сутки.
 
-token_bot = "1992519928:AAEBaigNoBfkfYCxg5F3fzN9wR4Iil0udak"
+token_bot = ""
 URL_bot = "https://api.telegram.org/bot" + token_bot + '/'
 
 # Отправка запроса на обновления
