@@ -12,7 +12,7 @@ now_str = now.strftime('%Y.%m.%d') # Для улучшения поиска да
 token_bot = ""
 URL_bot = "https://api.telegram.org/bot" + token_bot + '/'
 
-# Отправка запроса на обновления
+
 def get_updates():
     url = URL_bot + 'getUpdates'
     req = requests.get(url)
@@ -20,9 +20,9 @@ def get_updates():
 
 global last_update_id
 last_update_id = 0
-# Считывание поступающих мэсдж и обработка данных.Назначение параметров с json конфига
-def get_message():
 
+
+def get_message():
     global last_update_id
     data = get_updates()
     ash = last_object = data['result']
@@ -64,6 +64,7 @@ def get_message():
         requests.get(url)
     return None
 
+
 def editor_message(data: dict):
     message_id = data['result'][-1]['edited_message']['message_id']
     date_ed = data['result'][-1]['edited_message']['edit_date']
@@ -72,6 +73,7 @@ def editor_message(data: dict):
     message_ed = {'message_id': message_id, 'user_id': user_ids,
                   'text': message_text_ed, 'date': date_ed}
     return message_ed
+
 
 def recursion(data: dict):
     message_id = data['result'][-1]['edited_message']['message_id']
@@ -96,12 +98,13 @@ def recursion(data: dict):
             return data['result'][-1]
     if cheak_data:
         return recursion(cheak_data)
-print(get_message())
-# Функция для вызова отправки сообщения
+
+    
 def send_message(user_id, text):
     url = f"{URL_bot}sendmessage?chat_id={user_id}&text={text}"
     requests.get(url)
-# Делаем валидным элемент 'text' для преобразовывания в int
+
+    
 def valid_bet(answer: dict):
     bet = answer['text']
     # Пишем для операнда "-" "+". isdigit() - проверяет все ли числа в строчке
@@ -123,6 +126,7 @@ def valid_bet(answer: dict):
             answer['text'] = int(bet[0:])
             return answer
 
+        
 def select_sum(call):
     select_sum = 0
     for table in call:
@@ -131,6 +135,7 @@ def select_sum(call):
         if table[3] == '-':
             select_sum -= table[2]
     return select_sum
+
 
 def valid_cheaker(cheak_text,u_i):
     user_id = u_i
@@ -147,10 +152,7 @@ def valid_cheaker(cheak_text,u_i):
     else:
         return send_message(user_id, 'Введеная вами дата некорректна.')
 
-# Рабочий функционал для формирования бота "НАЧИНКА".Словарь,Список и вызов функции get_message() - для получение данных
-# Сформирован цикл для автоматизации бота на сервере
 
-print(get_updates())
 def main():
 
     db_bet = []
@@ -158,30 +160,23 @@ def main():
 
     while True :
         answer = get_message()
-        # Пишется условие для того,что бы бот не спамил при получении тому же клиенту(user_id)
-
         if answer != None:
-            # Сортировка данных
             user_id = answer['user_id']
             text = answer['text']
             bet_dict = answer.copy()
             valid_dict = valid_bet(bet_dict)
-            print(f'THIS TEXT ---------------> {text}')
-           # {'user_id': 411067032, 'text': 10, 'date': 1629999442, 'operand': '+'}
-            print(f'VALID DICT --------> {valid_dict}')
+           
             if valid_dict != None:
-# Вытащил дату для добавление в БД
                 us_date = valid_dict['date']
                 named_tuple = time.localtime(us_date)  # получить struct_time
                 time_string = strftime("%Y.%m.%d", named_tuple)
-# Назначены переменные
                 mess_id = valid_dict['message_id']
                 use_id = valid_dict['user_id']
                 use_bet = valid_dict['text']
                 use_opp = valid_dict['operand']
                 use_date = time_string
                 db.intbase(message_id=mess_id,user_id=use_id,user_bet=use_bet,user_opp=use_opp,user_date=use_date)
-# Команды бота
+
             if "/start" in text:
                 send_message(user_id,'Добро пожаловать, для начала работы впишите /work')
 
@@ -238,8 +233,7 @@ def main():
 
             if '/alltotal' in text:
                 send_message(user_id, 'Статистика за все ваше время ставок')
-                a_t = db.select_db(user_id=user_id,user_date=None)
-                print(f'A_T -----------> {a_t}')
+                a_t = db.select_db(user_id=user_id,user_date=None) 
                 all_total = select_sum(a_t)
                 send_message(user_id, f'Ваш результат:{all_total}')
 
@@ -258,7 +252,6 @@ def main():
                         if b_txt1 == '/stop':
                             send_message(user_id, 'Сброс функции успешен!')
                             flag = False
-                            break
                         else:
                             valid1 = valid_cheaker(cheak_text=b_txt1, u_i=user_id)
                             if valid1 != b_txt1:
@@ -273,7 +266,7 @@ def main():
                                 else:
                                     send_message(user_id, f'Ваш результат: {mtotal}')
                                 flag = False
-                                break
+
 
             if "/reset" in text:
                 db_bet.clear()
@@ -281,19 +274,12 @@ def main():
                 send_message(user_id,'Обнуление произведено успешно!')
         sleep(1)
 
+        
 if __name__ == '__main__':
     main()
+    
+    
 #dit = get_updates()
     #print(type(dit))
     #with open('newbot.json', 'w') as file:
        # json.dump(dit, file, indent=2, ensure_ascii=False)
-
-#last_object = data['result'][-1]
-
-       # Сохр
-
-# if mouth[0] != '0' and len(mouth) == 1:
-#    gmout = '0' + mouth[0]
-# if mouth[0] == '1' and int(mouth[1]) <= 2:
-#    gmout = mouth
-# СОХРАН
