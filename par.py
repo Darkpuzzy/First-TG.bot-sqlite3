@@ -4,8 +4,8 @@ import time
 
 URL_DB = 'Db/DatebaseTest2.db' # const
 
-def init_database():
 
+def init_database():
     with sqlite3.connect(URL_DB) as db:
         cursor = db.cursor()
         cursor.execute(""" CREATE TABLE IF NOT EXISTS Betlog(
@@ -19,14 +19,15 @@ def init_database():
 
 # Добавление в базу данных
 
+
 def intbase(message_id,user_id,user_bet,user_opp,user_date):
     empy_parameters = (message_id,user_id, user_bet, user_opp, user_date)
-
     with sqlite3.connect(URL_DB) as db:
         cursor = db.cursor()
         cursor.execute(""" INSERT INTO Betlog(Message_id,User_id, Bet, Opperand, Date) VALUES(?,?,?,?,?); """, empy_parameters)
         db.commit()
 # Формирование запросов
+
 
 def select_m(user_id, user_date):
     with sqlite3.connect(URL_DB) as db:
@@ -37,8 +38,8 @@ def select_m(user_id, user_date):
         result = cursor.fetchall()
     return result
 
-def select_db(user_id, user_date):
 
+def select_db(user_id, user_date):
     if user_date != None:
         with sqlite3.connect(URL_DB) as db:
             cursor = db.cursor()
@@ -52,6 +53,7 @@ def select_db(user_id, user_date):
             result1 = cursor.fetchall()
         return result1
 
+    
 def edit_message(user_id, message_id):
     with sqlite3.connect(URL_DB) as db:
         cursor = db.cursor()
